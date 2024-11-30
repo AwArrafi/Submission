@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.submission.R
 import com.example.submission.data.DataStoreManager
 import kotlinx.coroutines.launch
 
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     // Token ada, lanjutkan dengan proses utama aplikasi
                     // Misalnya: tampilkan data cerita atau halaman utama
-                    // fetchStories()
+                    setContentView(R.layout.activity_main)  // Atau tampilkan UI MainActivity
                 }
             }
         }

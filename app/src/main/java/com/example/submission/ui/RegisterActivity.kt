@@ -32,6 +32,9 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Menyembunyikan CircularProgressIndicator saat pertama kali membuka activity
+        binding.progressBar.visibility = android.view.View.GONE
+
         // Handle password validation
         binding.edRegisterPassword.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -85,13 +88,18 @@ class RegisterActivity : AppCompatActivity() {
             registerViewModel.registerState.collect { resource ->
                 when (resource) {
                     is Resource.Loading -> {
-                        // Tampilkan loading jika diperlukan
+                        // Tampilkan CircularProgressIndicator saat loading
+                        binding.progressBar.visibility = android.view.View.VISIBLE
                     }
                     is Resource.Success -> {
+                        // Sembunyikan CircularProgressIndicator setelah registrasi berhasil
+                        binding.progressBar.visibility = android.view.View.GONE
                         Toast.makeText(this@RegisterActivity, "Registration Successful", Toast.LENGTH_SHORT).show()
                         finish() // Kembali ke LoginActivity atau halaman utama
                     }
                     is Resource.Error -> {
+                        // Sembunyikan CircularProgressIndicator jika terjadi error
+                        binding.progressBar.visibility = android.view.View.GONE
                         Toast.makeText(this@RegisterActivity, resource.message, Toast.LENGTH_SHORT).show()
                     }
                 }

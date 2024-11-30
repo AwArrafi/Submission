@@ -48,12 +48,16 @@
         android:text="Login"
         android:padding="16dp" />
 
-    <ProgressBar
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:layout_gravity="center"/>
+        app:indicatorSize="48dp"
+        app:trackThickness="4dp"
+        app:indicatorColor="@color/colorPrimary"
+        app:trackColor="@color/colorGray" />
+
 
     <!-- Register Button -->
     <Button
