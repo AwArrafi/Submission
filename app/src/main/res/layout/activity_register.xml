@@ -6,6 +6,14 @@
     android:orientation="vertical"
     android:padding="32dp">
 
+    <!-- ProgressBar for loading state -->
+    <ProgressBar
+        android:id="@+id/progressBarRegister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
     <!-- Input Name -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameLayout"
@@ -41,7 +49,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Input Password -->
-    <com.google.android.material.textfield.TextInputLayout
+    <com.example.submission.ui.customview.PasswordEditText
         android:id="@+id/passwordLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,18 +63,9 @@
             android:hint="Password"
             android:inputType="textPassword"
             android:padding="16dp" />
-    </com.google.android.material.textfield.TextInputLayout>
+    </com.example.submission.ui.customview.PasswordEditText>
 
-    <!-- ProgressBar for loading state -->
-    <com.google.android.material.progressindicator.CircularProgressIndicator
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:indicatorSize="48dp"
-        app:trackThickness="4dp"
-        app:indicatorColor="@color/colorPrimary"
-        app:trackColor="@color/colorGray" />
+
 
     <!-- Register Button -->
     <Button

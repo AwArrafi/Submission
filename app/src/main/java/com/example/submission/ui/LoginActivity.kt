@@ -25,7 +25,18 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Pastikan CircularProgressIndicator disembunyikan saat aktivitas pertama kali dibuka
-        binding.progressBar.visibility = android.view.View.GONE
+        binding.progressBarLogin.visibility = android.view.View.GONE
+
+        // Cek token di DataStore sebelum lanjut ke login
+        lifecycleScope.launch {
+            val token = dataStoreManager.token.collect { token ->
+                if (token != null && token.isNotEmpty()) {
+                    // Jika token ada, langsung arahkan ke MainActivity
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish() // Tutup LoginActivity agar pengguna tidak bisa kembali
+                }
+            }
+        }
 
         // Mendapatkan AuthViewModel melalui Injection
         loginViewModel = Injection.provideAuthViewModel()
@@ -35,12 +46,12 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.loginState.collect { resource ->
                 when (resource) {
                     is Resource.Loading -> {
-                        // Tampilkan CircularProgressIndicator saat loading
-                        binding.progressBar.visibility = android.view.View.VISIBLE
+                        // Tampilkan ProgressBar saat login dimulai
+                        binding.progressBarLogin.visibility = android.view.View.VISIBLE
                     }
                     is Resource.Success -> {
-                        // Sembunyikan CircularProgressIndicator setelah login berhasil
-                        binding.progressBar.visibility = android.view.View.GONE
+                        // Sembunyikan ProgressBar setelah login berhasil
+                        binding.progressBarLogin.visibility = android.view.View.GONE
 
                         val loginResult = resource.data?.loginResult
 
@@ -61,8 +72,8 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                     is Resource.Error -> {
-                        // Sembunyikan CircularProgressIndicator jika terjadi error
-                        binding.progressBar.visibility = android.view.View.GONE
+                        // Sembunyikan ProgressBar jika terjadi error
+                        binding.progressBarLogin.visibility = android.view.View.GONE
                         Toast.makeText(this@LoginActivity, resource.message, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -75,8 +86,7 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.edLoginPassword.text.toString().trim()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                // Tampilkan CircularProgressIndicator sebelum mulai login
-                binding.progressBar.visibility = android.view.View.VISIBLE
+                binding.progressBarLogin.visibility = android.view.View.VISIBLE
                 loginViewModel.login(email, password)
             } else {
                 Toast.makeText(this, "Email or Password cannot be empty", Toast.LENGTH_SHORT).show()
@@ -89,5 +99,3 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
-
-

@@ -33,23 +33,7 @@ class RegisterActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Menyembunyikan CircularProgressIndicator saat pertama kali membuka activity
-        binding.progressBar.visibility = android.view.View.GONE
-
-        // Handle password validation
-        binding.edRegisterPassword.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                val password = s.toString()
-                if (password.length < 8) {
-                    binding.passwordLayout.error = "Password tidak boleh kurang dari 8 karakter"
-                } else {
-                    binding.passwordLayout.error = null
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        binding.progressBarRegister.visibility = android.view.View.GONE
 
         // Handle email validation
         binding.edRegisterEmail.addTextChangedListener(object : TextWatcher {
@@ -89,17 +73,17 @@ class RegisterActivity : AppCompatActivity() {
                 when (resource) {
                     is Resource.Loading -> {
                         // Tampilkan CircularProgressIndicator saat loading
-                        binding.progressBar.visibility = android.view.View.VISIBLE
+                        binding.progressBarRegister.visibility = android.view.View.VISIBLE
                     }
                     is Resource.Success -> {
                         // Sembunyikan CircularProgressIndicator setelah registrasi berhasil
-                        binding.progressBar.visibility = android.view.View.GONE
+                        binding.progressBarRegister.visibility = android.view.View.GONE
                         Toast.makeText(this@RegisterActivity, "Registration Successful", Toast.LENGTH_SHORT).show()
                         finish() // Kembali ke LoginActivity atau halaman utama
                     }
                     is Resource.Error -> {
                         // Sembunyikan CircularProgressIndicator jika terjadi error
-                        binding.progressBar.visibility = android.view.View.GONE
+                        binding.progressBarRegister.visibility = android.view.View.GONE
                         Toast.makeText(this@RegisterActivity, resource.message, Toast.LENGTH_SHORT).show()
                     }
                 }

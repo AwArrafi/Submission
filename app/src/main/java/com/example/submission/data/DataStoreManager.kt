@@ -26,4 +26,12 @@ class DataStoreManager(context: Context) {
     // Properti untuk mengambil token menggunakan Flow
     val token: Flow<String?> = dataStore.data
         .map { preferences -> preferences[TOKEN_KEY] }
+
+    // Method untuk menghapus token
+    suspend fun clearToken() {
+        dataStore.edit { preferences ->
+            preferences.remove(TOKEN_KEY)  // Hapus token dari DataStore
+        }
+        android.util.Log.d("DataStoreManager", "Token removed from DataStore")
+    }
 }

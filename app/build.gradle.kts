@@ -72,11 +72,13 @@ dependencies {
     implementation (libs.androidx.datastore.preferences)
 
 
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.8.7")
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
+    implementation (libs.androidx.lifecycle.livedata.ktx)
+    implementation (libs.androidx.lifecycle.viewmodel.savedstate)
 
 
-    implementation ("com.google.dagger:hilt-android:2.44")
-    implementation ("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    implementation (libs.hilt.android)
+    implementation (libs.androidx.hilt.lifecycle.viewmodel)
+
+    implementation (libs.glide)
 }
