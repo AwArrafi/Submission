@@ -19,8 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var dataStoreManager: DataStoreManager
-
-    private lateinit var storyViewModel: StoryViewModel // Without by viewModels() because we need to use factory
+    private lateinit var storyViewModel: StoryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +33,12 @@ class MainActivity : AppCompatActivity() {
 
         // Setup RecyclerView
         val storyAdapter = StoryAdapter(emptyList()) { story ->
-            // Handle item click if necessary
+            story.id?.let { id ->
+                openStoryDetail(id) // Kirimkan id yang valid ke DetailActivity
+            } ?: run {
+                // Jika id null, beri tahu pengguna atau lakukan tindakan lain
+                Toast.makeText(this, "ID is missing", Toast.LENGTH_SHORT).show()
+            }
         }
         binding.rvStories.layoutManager = LinearLayoutManager(this)
         binding.rvStories.adapter = storyAdapter
@@ -73,13 +77,19 @@ class MainActivity : AppCompatActivity() {
                     // Observasi perubahan data stories
                     storyViewModel.stories.observe(this@MainActivity, { storyResponse ->
                         val storiesList = storyResponse?.listStory ?: emptyList()
-                        storyAdapter.updateData(storiesList)
+                        storyAdapter.updateData(storiesList)  // Update adapter dengan data cerita
                     })
 
                     android.util.Log.d("MainActivity", "Token ditemukan, melanjutkan MainActivity")
                 }
             }
         }
+    }
 
+    // Fungsi untuk membuka DetailActivity dengan mengirimkan ID cerita
+    private fun openStoryDetail(storyId: String) {
+        val intent = Intent(this, DetailActivity::class.java)
+        intent.putExtra("STORY_ID", storyId) // Mengirimkan ID cerita ke DetailActivity
+        startActivity(intent)
     }
 }
