@@ -84,6 +84,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // FAB - Menambahkan Cerita Baru
+        binding.fabAddStory.setOnClickListener {
+            val intent = Intent(this, AddStoryActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     // Fungsi untuk membuka DetailActivity dengan mengirimkan ID cerita

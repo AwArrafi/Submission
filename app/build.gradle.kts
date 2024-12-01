@@ -81,4 +81,6 @@ dependencies {
     implementation (libs.androidx.hilt.lifecycle.viewmodel)
 
     implementation (libs.glide)
+
+
 }
