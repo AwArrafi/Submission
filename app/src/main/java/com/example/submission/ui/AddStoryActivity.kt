@@ -4,16 +4,31 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.submission.databinding.ActivityAddStoryBinding
+import com.example.submission.utils.getImageUri
 
 class AddStoryActivity : AppCompatActivity() {
 
     // View Binding
     private lateinit var binding: ActivityAddStoryBinding
     private var currentImageUri: Uri? = null
+
+    // ActivityResultLauncher untuk mengambil gambar dari kamera
+    private val launcherIntentCamera: ActivityResultLauncher<Uri> =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess ->
+            if (isSuccess) {
+                // Jika pengambilan foto berhasil, tampilkan gambar
+                showImage()
+            } else {
+                // Jika gagal, reset URI
+                currentImageUri = null
+                Toast.makeText(this, "Camera failed to capture image", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +40,10 @@ class AddStoryActivity : AppCompatActivity() {
         // Set listeners
         binding.galleryButton.setOnClickListener {
             startGallery()
+        }
+
+        binding.cameraButton.setOnClickListener {
+            startCamera()
         }
 
         binding.uploadButton.setOnClickListener {
@@ -45,7 +64,6 @@ class AddStoryActivity : AppCompatActivity() {
         launcherGallery.launch(pickVisualMediaRequest) // Menggunakan request ini untuk meluncurkan Photo Picker
     }
 
-
     // Register ActivityResultLauncher untuk memilih gambar
     private val launcherGallery = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -59,6 +77,22 @@ class AddStoryActivity : AppCompatActivity() {
             Log.d("Photo Picker", "No media selected")
             Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    // Fungsi untuk memulai kamera dan mengambil foto
+    private fun startCamera() {
+        // Dapatkan URI tempat foto akan disimpan
+        currentImageUri = getImageUri(this)
+
+        // Pastikan URI tidak null, lalu jalankan kamera
+        currentImageUri?.let {
+            launcherIntentCamera.launch(it)
+        }
+    }
+
+    // Fungsi untuk menampilkan gambar yang diambil ke ImageView
+    private fun showImage() {
+        binding.previewImageView.setImageURI(currentImageUri)
     }
 
     // Fungsi untuk upload cerita (sesuaikan dengan backend Anda)
