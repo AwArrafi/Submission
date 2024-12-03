@@ -6,13 +6,6 @@
     android:orientation="vertical"
     android:padding="32dp">
 
-    <!-- ProgressBar for loading state -->
-    <ProgressBar
-        android:id="@+id/progressBarRegister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
 
     <!-- Input Name -->
     <com.google.android.material.textfield.TextInputLayout
@@ -22,7 +15,7 @@
         app:errorEnabled="true"
         android:padding="16dp">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/ed_register_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,7 +32,7 @@
         app:errorEnabled="true"
         android:padding="16dp">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/ed_register_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,23 +41,14 @@
             android:padding="16dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Input Password -->
     <com.example.submission.ui.customview.PasswordEditText
-        android:id="@+id/passwordLayout"
+        android:id="@+id/ed_register_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:errorEnabled="true"
-        android:padding="16dp">
-
-        <EditText
-            android:id="@+id/ed_register_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:padding="16dp" />
-    </com.example.submission.ui.customview.PasswordEditText>
-
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:padding="24dp"
+        android:maxLines="1" />
 
 
     <!-- Register Button -->

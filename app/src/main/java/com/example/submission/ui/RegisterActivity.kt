@@ -1,5 +1,7 @@
 package com.example.submission.ui
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -32,8 +34,8 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Menyembunyikan CircularProgressIndicator saat pertama kali membuka activity
-        binding.progressBarRegister.visibility = android.view.View.GONE
+        // Apply fade-in animation for UI elements
+        applyFadeInAnimation()
 
         // Handle email validation
         binding.edRegisterEmail.addTextChangedListener(object : TextWatcher {
@@ -72,18 +74,13 @@ class RegisterActivity : AppCompatActivity() {
             registerViewModel.registerState.collect { resource ->
                 when (resource) {
                     is Resource.Loading -> {
-                        // Tampilkan CircularProgressIndicator saat loading
-                        binding.progressBarRegister.visibility = android.view.View.VISIBLE
+                        // No progress bar anymore
                     }
                     is Resource.Success -> {
-                        // Sembunyikan CircularProgressIndicator setelah registrasi berhasil
-                        binding.progressBarRegister.visibility = android.view.View.GONE
                         Toast.makeText(this@RegisterActivity, "Registration Successful", Toast.LENGTH_SHORT).show()
                         finish() // Kembali ke LoginActivity atau halaman utama
                     }
                     is Resource.Error -> {
-                        // Sembunyikan CircularProgressIndicator jika terjadi error
-                        binding.progressBarRegister.visibility = android.view.View.GONE
                         Toast.makeText(this@RegisterActivity, resource.message, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -103,6 +100,24 @@ class RegisterActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Please fill all fields correctly", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    // Apply fade-in animation to the UI components
+    private fun applyFadeInAnimation() {
+        val fadeInName = ObjectAnimator.ofFloat(binding.edRegisterName, "alpha", 0f, 1f)
+        val fadeInEmail = ObjectAnimator.ofFloat(binding.edRegisterEmail, "alpha", 0f, 1f)
+        val fadeInPassword = ObjectAnimator.ofFloat(binding.edRegisterPassword, "alpha", 0f, 1f)
+        val fadeInButton = ObjectAnimator.ofFloat(binding.btnRegister, "alpha", 0f, 1f)
+
+        fadeInName.duration = 1500
+        fadeInEmail.duration = 1500
+        fadeInPassword.duration = 1500
+        fadeInButton.duration = 1500
+
+        AnimatorSet().apply {
+            playTogether(fadeInName, fadeInEmail, fadeInPassword, fadeInButton)
+            start()
         }
     }
 }

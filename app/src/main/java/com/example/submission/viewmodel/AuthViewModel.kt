@@ -27,18 +27,14 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         viewModelScope.launch {
             try {
                 _loginState.value = Resource.Loading()
-                // Memanggil repository untuk login
                 val response = authRepository.login(email, password)
                 _loginState.value = Resource.Success(response)
             } catch (e: HttpException) {
-                // Tangani error jika response status bukan 200 OK
                 val errorResponse = parseErrorResponse(e)
                 _loginState.value = Resource.Error(errorResponse?.message ?: "Login failed")
             } catch (e: IOException) {
-                // Tangani kesalahan jaringan
                 _loginState.value = Resource.Error("Network error occurred")
             } catch (e: Exception) {
-                // Tangani kesalahan lainnya
                 _loginState.value = Resource.Error("An unknown error occurred")
             }
         }
@@ -72,4 +68,3 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         }
     }
 }
-

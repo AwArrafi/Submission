@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     // Jika token ada, teruskan dengan mengambil stories
                     val storyRepository = Injection.provideStoryRepository(applicationContext)
+
+                    // Inisialisasi storyViewModel hanya setelah token ada
                     storyViewModel = ViewModelProvider(this@MainActivity, StoryViewModelFactory(storyRepository)).get(StoryViewModel::class.java)
 
                     // Ambil cerita tanpa parameter
@@ -97,5 +99,13 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, DetailActivity::class.java)
         intent.putExtra("STORY_ID", storyId) // Mengirimkan ID cerita ke DetailActivity
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Memanggil getStories untuk mengambil data terbaru setelah kembali dari AddStoryActivity
+        if (::storyViewModel.isInitialized) {  // Cek apakah storyViewModel sudah diinisialisasi
+            storyViewModel.getStories()
+        }
     }
 }

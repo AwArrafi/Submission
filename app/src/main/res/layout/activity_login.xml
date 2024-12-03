@@ -6,13 +6,6 @@
     android:orientation="vertical"
     android:padding="32dp">
 
-    <ProgressBar
-        android:id="@+id/progressBarLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
     <!-- Input Email -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailLayout"
@@ -27,25 +20,18 @@
             android:layout_height="wrap_content"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:padding="16dp" />
+            android:padding="16dp"
+            android:alpha="0" /> <!-- Mulai dengan alpha 0 -->
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Input Password using custom PasswordEditText -->
     <com.example.submission.ui.customview.PasswordEditText
-        android:id="@+id/passwordLayout"
+        android:id="@+id/ed_login_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:errorEnabled="true"
-        android:padding="16dp">
-
-        <EditText
-            android:id="@+id/ed_login_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:padding="16dp" />
-    </com.example.submission.ui.customview.PasswordEditText>
+        android:padding="16dp"
+        android:alpha="0" /> <!-- Mulai dengan alpha 0 -->
 
     <!-- Login Button -->
     <Button
@@ -53,9 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Login"
-        android:padding="16dp" />
-
-
+        android:padding="16dp"
+        android:alpha="0" /> <!-- Mulai dengan alpha 0 -->
 
     <!-- Register Button -->
     <Button
@@ -63,6 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Register"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:alpha="0" /> <!-- Mulai dengan alpha 0 -->
 
 </LinearLayout>

@@ -1,5 +1,7 @@
 package com.example.submission.ui
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -24,9 +26,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Pastikan CircularProgressIndicator disembunyikan saat aktivitas pertama kali dibuka
-        binding.progressBarLogin.visibility = android.view.View.GONE
-
         // Cek token di DataStore sebelum lanjut ke login
         lifecycleScope.launch {
             val token = dataStoreManager.token.collect { token ->
@@ -46,13 +45,9 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.loginState.collect { resource ->
                 when (resource) {
                     is Resource.Loading -> {
-                        // Tampilkan ProgressBar saat login dimulai
-                        binding.progressBarLogin.visibility = android.view.View.VISIBLE
+                        // Tidak ada ProgressBar, animasi bisa ditambahkan jika diperlukan
                     }
                     is Resource.Success -> {
-                        // Sembunyikan ProgressBar setelah login berhasil
-                        binding.progressBarLogin.visibility = android.view.View.GONE
-
                         val loginResult = resource.data?.loginResult
 
                         if (loginResult != null && loginResult.token != null) {
@@ -72,8 +67,6 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                     is Resource.Error -> {
-                        // Sembunyikan ProgressBar jika terjadi error
-                        binding.progressBarLogin.visibility = android.view.View.GONE
                         Toast.makeText(this@LoginActivity, resource.message, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -86,7 +79,6 @@ class LoginActivity : AppCompatActivity() {
             val password = binding.edLoginPassword.text.toString().trim()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                binding.progressBarLogin.visibility = android.view.View.VISIBLE
                 loginViewModel.login(email, password)
             } else {
                 Toast.makeText(this, "Email or Password cannot be empty", Toast.LENGTH_SHORT).show()
@@ -96,6 +88,24 @@ class LoginActivity : AppCompatActivity() {
         // Pindah ke RegisterActivity jika belum punya akun
         binding.btnRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
+        }
+
+        // Animasi Fade In untuk Email, Password, dan Tombol Login
+        val fadeInEmail = ObjectAnimator.ofFloat(binding.edLoginEmail, "alpha", 0f, 1f)
+        val fadeInPassword = ObjectAnimator.ofFloat(binding.edLoginPassword, "alpha", 0f, 1f)
+        val fadeInLoginButton = ObjectAnimator.ofFloat(binding.btnLogin, "alpha", 0f, 1f)
+        val fadeInRegisterButton = ObjectAnimator.ofFloat(binding.btnRegister, "alpha", 0f, 1f)
+
+        // Durasi animasi
+        fadeInEmail.duration = 3500
+        fadeInPassword.duration = 3500
+        fadeInLoginButton.duration = 3500
+        fadeInRegisterButton.duration = 3500
+
+        // Gabungkan animasi menjadi satu set
+        AnimatorSet().apply {
+            playTogether(fadeInEmail, fadeInPassword, fadeInLoginButton, fadeInRegisterButton)
+            start()  // Mulai animasi
         }
     }
 }

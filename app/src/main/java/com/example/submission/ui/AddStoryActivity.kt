@@ -88,6 +88,7 @@ class AddStoryActivity : AppCompatActivity() {
         addStoryViewModel.uploadResponse.observe(this) { response ->
             if (response?.isSuccessful == true) {
                 Toast.makeText(this, "Story uploaded successfully", Toast.LENGTH_SHORT).show()
+                finish() // Menutup AddStoryActivity dan kembali ke halaman sebelumnya
             } else {
                 Toast.makeText(this, "Failed to upload story", Toast.LENGTH_SHORT).show()
             }
