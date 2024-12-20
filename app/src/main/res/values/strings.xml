@@ -4,4 +4,6 @@
     <string name="gallery">Gallery</string>
     <string name="upload">Upload</string>
     <string name="empty_image_warning">Image cannot be null</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="open_maps">Open Maps</string>
 </resources>

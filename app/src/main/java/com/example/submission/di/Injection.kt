@@ -47,4 +47,5 @@ object Injection {
         val storyRepository = provideStoryRepository(context)
         return StoryViewModel(storyRepository)
     }
+
 }

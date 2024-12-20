@@ -2,11 +2,14 @@ package com.example.submission.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.submission.R
 import com.example.submission.adapter.StoryAdapter
 import com.example.submission.data.DataStoreManager
 import com.example.submission.databinding.ActivityMainBinding
@@ -34,9 +37,8 @@ class MainActivity : AppCompatActivity() {
         // Setup RecyclerView
         val storyAdapter = StoryAdapter(emptyList()) { story ->
             story.id?.let { id ->
-                openStoryDetail(id) // Kirimkan id yang valid ke DetailActivity
+                openStoryDetail(id)
             } ?: run {
-                // Jika id null, beri tahu pengguna atau lakukan tindakan lain
                 Toast.makeText(this, "ID is missing", Toast.LENGTH_SHORT).show()
             }
         }
@@ -45,16 +47,10 @@ class MainActivity : AppCompatActivity() {
 
         // Set up logout button
         binding.btnLogout.setOnClickListener {
-            android.util.Log.d("MainActivity", "Logout button clicked")
-
-            // Clear the token from DataStore
             lifecycleScope.launch {
-                dataStoreManager.clearToken()  // Clear token from DataStore
-                android.util.Log.d("MainActivity", "Token cleared from DataStore")
-
-                // After clearing token, navigate back to LoginActivity
+                dataStoreManager.clearToken()
                 startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                finish()  // Close MainActivity so the user can't go back to it
+                finish()
                 Toast.makeText(this@MainActivity, "Logged out successfully", Toast.LENGTH_SHORT).show()
             }
         }
@@ -63,26 +59,16 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             dataStoreManager.token.collect { token ->
                 if (token.isNullOrEmpty()) {
-                    // Jika token kosong, arahkan ke LoginActivity
                     startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                    finish()  // Tutup MainActivity agar pengguna tidak bisa kembali
+                    finish()
                 } else {
-                    // Jika token ada, teruskan dengan mengambil stories
                     val storyRepository = Injection.provideStoryRepository(applicationContext)
-
-                    // Inisialisasi storyViewModel hanya setelah token ada
                     storyViewModel = ViewModelProvider(this@MainActivity, StoryViewModelFactory(storyRepository)).get(StoryViewModel::class.java)
-
-                    // Ambil cerita tanpa parameter
                     storyViewModel.getStories()
-
-                    // Observasi perubahan data stories
-                    storyViewModel.stories.observe(this@MainActivity, { storyResponse ->
+                    storyViewModel.stories.observe(this@MainActivity) { storyResponse ->
                         val storiesList = storyResponse?.listStory ?: emptyList()
-                        storyAdapter.updateData(storiesList)  // Update adapter dengan data cerita
-                    })
-
-                    android.util.Log.d("MainActivity", "Token ditemukan, melanjutkan MainActivity")
+                        storyAdapter.updateData(storiesList)
+                    }
                 }
             }
         }
@@ -94,18 +80,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Fungsi untuk membuka DetailActivity dengan mengirimkan ID cerita
     private fun openStoryDetail(storyId: String) {
         val intent = Intent(this, DetailActivity::class.java)
-        intent.putExtra("STORY_ID", storyId) // Mengirimkan ID cerita ke DetailActivity
+        intent.putExtra("STORY_ID", storyId)
         startActivity(intent)
     }
 
     override fun onResume() {
         super.onResume()
-        // Memanggil getStories untuk mengambil data terbaru setelah kembali dari AddStoryActivity
-        if (::storyViewModel.isInitialized) {  // Cek apakah storyViewModel sudah diinisialisasi
+        if (::storyViewModel.isInitialized) {
             storyViewModel.getStories()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.map_options, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_open_maps -> {
+                val intent = Intent(this, MapsActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

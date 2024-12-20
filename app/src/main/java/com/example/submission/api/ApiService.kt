@@ -15,6 +15,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -37,9 +38,14 @@ interface ApiService {
     @GET("stories")
     suspend fun getStories(): Response<StoryResponse>
 
+    @GET("stories")
+    suspend fun getStoriesWithLocation(
+        @Query("location") location: Int = 1
+    ): StoryResponse
+
     @GET("stories/{id}")
     suspend fun getDetailStories(
-        @Path("id") storyId: String  // Tidak perlu menambahkan header manual, akan ditangani oleh interceptor
+        @Path("id") storyId: String
     ): Response<StoryDetailResponse>
 
     @Multipart

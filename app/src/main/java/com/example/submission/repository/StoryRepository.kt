@@ -22,6 +22,10 @@ class StoryRepository private constructor(
     private val dataStoreManager: DataStoreManager
 ) {
 
+    suspend fun getStoriesWithLocation(): StoryResponse {
+        return apiService.getStoriesWithLocation(location = 1)
+    }
+
     // Fungsi untuk mendapatkan daftar cerita
     suspend fun getStories(): Flow<StoryResponse> = flow {
         val response = apiService.getStories()
