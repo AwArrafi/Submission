@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp")
-    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {
@@ -48,15 +47,14 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
-    testImplementation(libs.junit.junit)
-    testImplementation(libs.junit.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     // Retrofit untuk API calls
     implementation (libs.retrofit)
+
+    // Gson converter untuk Retrofit
     implementation (libs.converter.gson)
 
     // Kotlin Coroutines untuk asynchronous programming
@@ -70,23 +68,19 @@ dependencies {
 
     // Untuk bekerja dengan Material Components (jika belum ada)
     implementation (libs.material)
+
     implementation (libs.androidx.datastore.preferences)
+
+
     implementation (libs.androidx.lifecycle.viewmodel.ktx)
     implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation (libs.androidx.lifecycle.viewmodel.savedstate)
+
+
     implementation (libs.hilt.android)
     implementation (libs.androidx.hilt.lifecycle.viewmodel)
-    implementation(libs.androidx.paging.runtime.ktx)
 
     implementation (libs.glide)
-    implementation ("com.google.android.gms:play-services-maps:19.0.0")
-    implementation ("com.google.android.gms:play-services-location:21.3.0")
 
-    androidTestImplementation(libs.androidx.core.testing) //InstantTaskExecutorRule
-    androidTestImplementation(libs.kotlinx.coroutines.test) //TestDispatcher
 
-    testImplementation(libs.androidx.core.testing) // InstantTaskExecutorRule
-    testImplementation(libs.kotlinx.coroutines.test) //TestDispatcher
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.inline)
 }

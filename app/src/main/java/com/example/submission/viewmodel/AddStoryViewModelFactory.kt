@@ -8,7 +8,7 @@ import com.example.submission.data.DataStoreManager
 
 class AddStoryViewModelFactory(
     private val application: Application,
-    private val apiService: ApiService,  // Terima ApiService langsung
+    private val apiService: ApiService,
     private val dataStoreManager: DataStoreManager
 ) : ViewModelProvider.Factory {
 

@@ -22,7 +22,6 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
     private val _loginState = MutableStateFlow<Resource<LoginResponse>>(Resource.Loading())
     val loginState: StateFlow<Resource<LoginResponse>> get() = _loginState
 
-    // Fungsi untuk login
     fun login(email: String, password: String) {
         viewModelScope.launch {
             try {
@@ -40,17 +39,15 @@ class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
         }
     }
 
-    // Fungsi untuk parsing error response dengan Gson
     private fun parseErrorResponse(e: HttpException): ErrorResponse? {
         return try {
             val jsonInString = e.response()?.errorBody()?.string()
             Gson().fromJson(jsonInString, ErrorResponse::class.java)
         } catch (jsonException: Exception) {
-            null // Jika gagal parsing, return null
+            null
         }
     }
 
-    // Fungsi untuk registrasi tetap sama seperti sebelumnya
     fun register(name: String, email: String, password: String) {
         _registerState.value = Resource.Loading()
         viewModelScope.launch {

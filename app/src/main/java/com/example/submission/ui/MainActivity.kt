@@ -11,11 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.submission.R
 import com.example.submission.adapter.StoryAdapter
+import com.example.submission.adapter.StoryPagingAdapter
 import com.example.submission.data.DataStoreManager
 import com.example.submission.databinding.ActivityMainBinding
 import com.example.submission.di.Injection
 import com.example.submission.viewmodel.StoryViewModel
 import com.example.submission.viewmodel.StoryViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var dataStoreManager: DataStoreManager
     private lateinit var storyViewModel: StoryViewModel
+    private lateinit var storyAdapter: StoryAdapter
+    private lateinit var storyPagingAdapter: StoryPagingAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,21 +35,45 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Initialize DataStoreManager with application context
+        // Initialize DataStoreManager
         dataStoreManager = DataStoreManager(applicationContext)
 
-        // Setup RecyclerView
-        val storyAdapter = StoryAdapter(emptyList()) { story ->
+        // Initialize PagingAdapter and RecyclerView
+        storyPagingAdapter = StoryPagingAdapter()
+        storyAdapter = StoryAdapter(emptyList()) { story ->
             story.id?.let { id ->
-                openStoryDetail(id)
+                openStoryDetail(id) // Open detail if ID is valid
             } ?: run {
                 Toast.makeText(this, "ID is missing", Toast.LENGTH_SHORT).show()
             }
         }
         binding.rvStories.layoutManager = LinearLayoutManager(this)
-        binding.rvStories.adapter = storyAdapter
 
-        // Set up logout button
+        lifecycleScope.launch {
+            dataStoreManager.token.collect { token ->
+                if (token.isNullOrEmpty()) {
+                    // Redirect to LoginActivity if token is null
+                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                    finish()
+                } else {
+                    val storyRepository = Injection.provideStoryRepository(applicationContext)
+                    storyViewModel = ViewModelProvider(
+                        this@MainActivity,
+                        StoryViewModelFactory(storyRepository)
+                    )[StoryViewModel::class.java]
+
+                    setupStoryList(token) // Call setup function for story display
+                }
+            }
+        }
+
+        // Set up FAB for adding new story
+        binding.fabAddStory.setOnClickListener {
+            val intent = Intent(this, AddStoryActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Set up Logout button
         binding.btnLogout.setOnClickListener {
             lifecycleScope.launch {
                 dataStoreManager.clearToken()
@@ -54,29 +82,24 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "Logged out successfully", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
-        // Check if token exists and then get stories
+    private fun setupStoryList(token: String) {
+        // Observe data using Paging or standard list based on requirement
         lifecycleScope.launch {
-            dataStoreManager.token.collect { token ->
-                if (token.isNullOrEmpty()) {
-                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                    finish()
-                } else {
-                    val storyRepository = Injection.provideStoryRepository(applicationContext)
-                    storyViewModel = ViewModelProvider(this@MainActivity, StoryViewModelFactory(storyRepository)).get(StoryViewModel::class.java)
-                    storyViewModel.getStories()
-                    storyViewModel.stories.observe(this@MainActivity) { storyResponse ->
-                        val storiesList = storyResponse?.listStory ?: emptyList()
-                        storyAdapter.updateData(storiesList)
-                    }
-                }
+            storyViewModel.getStoriesWithPaging().collectLatest { pagingData ->
+                binding.rvStories.adapter = storyPagingAdapter
+                storyPagingAdapter.submitData(pagingData)
             }
         }
 
-        // FAB - Menambahkan Cerita Baru
-        binding.fabAddStory.setOnClickListener {
-            val intent = Intent(this, AddStoryActivity::class.java)
-            startActivity(intent)
+        // Optional: Observing non-paging data
+        storyViewModel.stories.observe(this) { storyResponse ->
+            val storiesList = storyResponse?.listStory ?: emptyList()
+            if (storiesList.isNotEmpty()) {
+                binding.rvStories.adapter = storyAdapter
+                storyAdapter.updateData(storiesList)
+            }
         }
     }
 
@@ -88,6 +111,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // Update stories when returning to MainActivity
         if (::storyViewModel.isInitialized) {
             storyViewModel.getStories()
         }

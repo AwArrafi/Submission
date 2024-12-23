@@ -22,14 +22,12 @@ class AddStoryViewModel(
     val isLoading = MutableLiveData<Boolean>()
     val errorMessage = MutableLiveData<String>()
 
-    // Fungsi untuk mengirim cerita (post story)
     fun postStory(description: String, imageUri: Uri, lat: Double?, lon: Double?) {
         viewModelScope.launch {
             isLoading.value = true
             try {
-                val context = getApplication<Application>().applicationContext // Mendapatkan context dari Application
+                val context = getApplication<Application>().applicationContext
 
-                // Memanggil fungsi postStory di StoryRepository dengan menyuntikkan context
                 val repository = StoryRepository.getInstance(apiService, dataStoreManager)
                 val response = repository.postStory(description, imageUri, lat, lon, context)
 

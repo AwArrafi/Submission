@@ -2,8 +2,13 @@ package com.example.submission.repository
 
 import android.content.Context
 import android.net.Uri
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.example.submission.api.ApiService
 import com.example.submission.data.DataStoreManager
+import com.example.submission.data.StoryPagingSource
+import com.example.submission.response.ListStoryItem
 import com.example.submission.response.StoryDetailResponse
 import com.example.submission.response.StoryResponse
 import com.example.submission.response.UploadResponse
@@ -66,6 +71,16 @@ class StoryRepository private constructor(
             // Tangani error jika ada
             throw e
         }
+    }
+
+    fun getStoriesWithPaging(): Flow<PagingData<ListStoryItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20, // Sesuai dengan API default
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { StoryPagingSource(apiService) }
+        ).flow
     }
 
     companion object {

@@ -5,10 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.submission.repository.StoryRepository
 import com.example.submission.response.ListStoryItem
 import com.example.submission.response.StoryDetailResponse
 import com.example.submission.response.StoryResponse
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class StoryViewModel(private val storyRepository: StoryRepository) : ViewModel() {
@@ -22,8 +25,6 @@ class StoryViewModel(private val storyRepository: StoryRepository) : ViewModel()
     private val _storiesWithLocation = MutableLiveData<List<ListStoryItem>>()
     val storiesWithLocation: LiveData<List<ListStoryItem>> = _storiesWithLocation
 
-
-    // Fungsi untuk mendapatkan daftar cerita
     fun getStories() {
         viewModelScope.launch {
             try {
@@ -36,7 +37,6 @@ class StoryViewModel(private val storyRepository: StoryRepository) : ViewModel()
         }
     }
 
-    // Fungsi untuk mendapatkan detail cerita
     fun getStoryDetail(storyId: String) {
         viewModelScope.launch {
             try {
@@ -49,16 +49,17 @@ class StoryViewModel(private val storyRepository: StoryRepository) : ViewModel()
         }
     }
 
+    fun getStoriesWithPaging(): Flow<PagingData<ListStoryItem>> {
+        return storyRepository.getStoriesWithPaging().cachedIn(viewModelScope)
+    }
+
     fun fetchStoriesWithLocation() {
         viewModelScope.launch {
             try {
-                // Panggil repository untuk mendapatkan data
                 val response = storyRepository.getStoriesWithLocation()
 
-                // Post data langsung ke LiveData
                 _storiesWithLocation.postValue(response.listStory)
             } catch (e: Exception) {
-                // Tangani error
                 Log.e("StoryViewModel", "Error fetching stories with location", e)
             }
         }

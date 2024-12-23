@@ -29,11 +29,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inisialisasi StoryViewModel secara asynchronous
         lifecycleScope.launch {
             storyViewModel = Injection.provideStoryViewModel(this@MapsActivity)
 
-            // Dapatkan MapFragment dan daftarkan callback
             val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
             mapFragment.getMapAsync(this@MapsActivity)
@@ -43,13 +41,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Konfigurasi UI Map
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isIndoorLevelPickerEnabled = true
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMapToolbarEnabled = true
 
-        // Observasi data dan tambahkan marker
         observeStoriesWithLocation()
     }
 
@@ -74,7 +70,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        // Panggil data dari ViewModel
         storyViewModel.fetchStoriesWithLocation()
     }
 }

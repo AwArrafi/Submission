@@ -19,12 +19,11 @@ import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
-    // Declare ViewBinding object
+
     private lateinit var binding: ActivityRegisterBinding
 
-    // Inisialisasi ViewModel dengan manual injection
     private val registerViewModel: AuthViewModel by viewModels {
-        AuthViewModelFactory(Injection.provideAuthRepository()) // Gunakan factory untuk menginjeksi AuthRepository
+        AuthViewModelFactory(Injection.provideAuthRepository())
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +68,6 @@ class RegisterActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        // Mengamati status register menggunakan collect di lifecycleScope
         lifecycleScope.launch {
             registerViewModel.registerState.collect { resource ->
                 when (resource) {
@@ -78,7 +76,7 @@ class RegisterActivity : AppCompatActivity() {
                     }
                     is Resource.Success -> {
                         Toast.makeText(this@RegisterActivity, "Registration Successful", Toast.LENGTH_SHORT).show()
-                        finish() // Kembali ke LoginActivity atau halaman utama
+                        finish()
                     }
                     is Resource.Error -> {
                         Toast.makeText(this@RegisterActivity, resource.message, Toast.LENGTH_SHORT).show()
